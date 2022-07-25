@@ -8,9 +8,16 @@ import {SafeAreaView,
   ScrollView, 
   TextInput,
   SectionList,
-  Button} from 'react-native';
+  Button,
+  Modal,
+  Image,
+  ImageBackground
+} from 'react-native';
+import { Snackbar } from 'react-native-paper';
 
 import http from './src/utils/consts/http';
+
+import {a} from "./assets";
 
 
 const App = () => {
@@ -23,6 +30,8 @@ const App = () => {
  const [name, setName] = useState("")
  const [nameError, setNameError] = useState(false)
  const [nameErrorMsg, setNameErrorMsg] = useState ("");
+ 
+ const [showInfo, setShowInfo] = useState(false)
 
  useEffect(()=>{
   //  fetch("https://randomuser.me/api/?results=5")
@@ -32,6 +41,7 @@ const App = () => {
   http.get("?results=5")
   .then(res => setUsers(res.data.results))
   .catch()
+  console.log(users)
 },[])
 
 const validateForm = () => {
@@ -47,9 +57,61 @@ const validateForm = () => {
   }
 }
 
+const TheModal = () => {
+  return <Modal
+    visible={showInfo}
+    animationType='fade'
+    transparent
+  >
+    <View style={styles.modalContainer}>
+      <Text style={styles.modalTxt}>
+      Name should have atleast have 6 characters
+      </Text>
+      <Button 
+        title='OK'
+        onPress={()=>{
+          setShowInfo(false)
+        }}
+      />
+    </View>
+  </Modal>
+}
+
+const TheSnackBar = () => {
+  return <Snackbar
+  visible={showInfo}
+  onDismiss={()=>{setShowInfo(false)}}
+  action={{
+    label: 'Ok',
+    onPress: () => {
+      setShowInfo(false)
+    },
+  }}>
+  Name should have atleast have 6 characters
+</Snackbar>
+}
+
   return (
     <SafeAreaView>
+      {/* <TheModal/> */}
+      <TheSnackBar />
       <View style={styles.container}>
+        {/* <View style={styles.nameHeadHolder}>
+          <Text style={styles.nameHead}>
+            Name
+          </Text>
+          <Text
+          onPress={()=>{
+            setShowInfo(!showInfo)
+          }}
+          style={styles.nameInfo}
+          >
+            i
+          </Text>
+            {showInfo && <Text style={styles.infoTxt}>
+              Name should have atleast 6 characters
+              </Text>}
+        </View>
         <TextInput 
           placeholder='Enter Your Name'
           style={styles.textInput}
@@ -66,7 +128,7 @@ const validateForm = () => {
             validateForm()
             // !nameError && navigate to home fn
           }}
-        />
+        /> */}
         {/* <FlatList
          data={users}
          renderItem={({item, index})=>{
@@ -81,6 +143,26 @@ const validateForm = () => {
          ListEmptyComponent={()=> <ActivityIndicator/>}
          ItemSeparatorComponent={()=> <View style={styles.itemSeparator}/>}
         /> */}
+        <View
+          style={{
+            height:"100%",
+            width:"100%",
+            overflow:"hidden",
+            backgroundColor:"blue"
+          }}
+        >
+        <ImageBackground
+          style={{
+            height:"100%",
+            width: "100%",
+          }}
+          resizeMode={"cover"}
+          source={a}>
+              <View 
+                style={{backgroundColor:"red", height:20}}
+              />
+          </ImageBackground>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -123,6 +205,41 @@ const styles = StyleSheet.create({
   errorMsg: {
     color:"red",
     padding:10
+  },
+  nameHead:{
+    marginBottom:10,
+    marginRight:10
+  },
+  nameInfo:{
+    backgroundColor:"orange",
+    width:20,
+    height:20,
+    textAlign:"center",
+    borderRadius:10
+  },
+  infoTxt: {
+    backgroundColor:"white",
+    color: "black",
+    padding:5,
+    borderRadius:5,
+    position:"absolute",
+    top: -30,
+    zIndex:1
+  },
+  nameHeadHolder:{
+    flexDirection:"row"
+  },
+  modalContainer:{
+    justifyContent:"center",
+    alignItems:"center",
+    backgroundColor: "grey",
+    top: "40%",
+    padding:30,
+    borderRadius:10
+  },
+  modalTxt:{
+    color:"white",
+    marginBottom:10
   }
 })
 
