@@ -1,3 +1,5 @@
+import {Dispatch} from 'react';
+
 export type State = {
   showModal: boolean;
   showToast: boolean;
@@ -6,6 +8,11 @@ export type State = {
 export type Action = {
   type: string;
   payload: boolean;
+};
+
+export type AppContextType = {
+  state: State;
+  dispatch: Dispatch<Action>;
 };
 
 export type apiUser = {
