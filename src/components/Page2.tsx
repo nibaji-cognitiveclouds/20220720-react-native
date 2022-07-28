@@ -1,15 +1,35 @@
-import React from 'react'
+import React, {FC, useContext} from 'react'
 import { SafeAreaView, Text } from 'react-native'
 
-const Page2 = (props : any) => {
-    console.log(props.route)
+import { AppContext } from '../context/AppContext'
+import { SHOW_MODAL } from '../utils/consts/actions'
+
+import { styles } from '../styles/Styles'
+
+type Props = {
+    route:{
+        params:{
+            message: string
+        }
+    }
+}
+
+const Page2: FC<Props> = (props) => {
+    const dispatch = useContext(AppContext).dispatch as any;
+    const state = useContext(AppContext).state;
 
   return (
    <SafeAreaView>
-     <Text style={{
-        color:"black"
-    }}>
-        {props.route.params.message}
+    <Text
+        onPress={()=>{
+            dispatch({
+                type: SHOW_MODAL,
+                payload: true
+            })
+        }}
+     style={[styles.listItemTxt, {backgroundColor: `${state.showModal ? "green" : "red"}`}]}
+     >
+        {props?.route?.params?.message}
     </Text>
    </SafeAreaView>
   )

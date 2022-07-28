@@ -1,4 +1,4 @@
-import React, {useEffect, useState, FC} from 'react';
+import React, {useEffect, useState, FC, useContext} from 'react';
 import {SafeAreaView,
   View,
   StyleSheet,
@@ -14,19 +14,31 @@ import {SafeAreaView,
   ImageBackground
 } from 'react-native';
 import { Snackbar } from 'react-native-paper';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import http from '../utils/consts/http';
+import { AppContext } from '../context/AppContext';
 
 import {a} from "../../assets";
 
+import { ApiResponse } from '../types';
 
-const Home : FC = (props: any) => {
+import { styles } from '../styles/Styles';
+import { SHOW_MODAL } from '../utils/consts/actions';
+
+type Props = {
+    navigation : NativeStackScreenProps<any, any>
+}
+
+const Home : FC<Props> = ({ navigation}) => {
   //<div> == <View> <></>
   /* 
   <div>Hello world</div>
   */
 
- const [users, setUsers] = useState([])
+  const dispatch = useContext(AppContext).dispatch as any;
+
+ const [users, setUsers] = useState<ApiResponse>([])
  const [name, setName] = useState("")
  const [nameError, setNameError] = useState(false)
  const [nameErrorMsg, setNameErrorMsg] = useState ("");
@@ -56,26 +68,6 @@ const validateForm = () => {
   }
 }
 
-const TheModal = () => {
-  return <Modal
-    visible={showInfo}
-    animationType='fade'
-    transparent
-  >
-    <View style={styles.modalContainer}>
-      <Text style={styles.modalTxt}>
-      Name should have atleast have 6 characters
-      </Text>
-      <Button 
-        title='OK'
-        onPress={()=>{
-          setShowInfo(false)
-        }}
-      />
-    </View>
-  </Modal>
-}
-
 const TheSnackBar = () => {
   return <Snackbar
   visible={showInfo}
@@ -92,8 +84,16 @@ const TheSnackBar = () => {
 
   return (
     <SafeAreaView>
-      {/* <TheModal/> */}
       <TheSnackBar />
+      <Button 
+        title='SHOW MODAL'
+        onPress={()=>{
+            dispatch({
+                type: SHOW_MODAL,
+                payload: true
+            })
+        }}
+      />
       <View style={styles.container}>
         {/* <View style={styles.nameHeadHolder}>
           <Text style={styles.nameHead}>
@@ -127,17 +127,18 @@ const TheSnackBar = () => {
       onPress={()=> {
         // validateForm()
         // !nameError && navigate to home fn
-        props.navigation.navigate("Page2", {
+        //@ts-ignore
+        navigation.navigate("Page2", {
             "message": "Hi",
         })
       }}
     />
-        {/* <FlatList
+        <FlatList
          data={users}
          renderItem={({item, index})=>{
           return <View style={styles.listItem}>
               <Text style={styles.listItemTxt}>
-                {item.name.first} {item.name.last}
+                {item?.name?.first} {item?.name?.last}
               </Text>
             </View>
          }}
@@ -145,7 +146,7 @@ const TheSnackBar = () => {
          contentContainerStyle={styles.flatListStyle}
          ListEmptyComponent={()=> <ActivityIndicator/>}
          ItemSeparatorComponent={()=> <View style={styles.itemSeparator}/>}
-        /> */}
+        />
         {/* <View
           style={{
             height:"100%",
@@ -176,80 +177,5 @@ const TheSnackBar = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container : {
-    backgroundColor:"rgba(0,0,0,.1)",
-    height:"100%",
-    justifyContent:"center",
-    padding:20,
-  },
-  listItem: {
-    margin:5,
-    backgroundColor:"lightblue",
-    padding:5,
-    borderRadius: 5
-  },
-  listItemTxt: {
-    color: "blue"
-  },
-  flatListStyle: {
-    backgroundColor: "green"
-  },
-  itemSeparator: {
-    borderBottomColor: "white",
-    borderWidth: 2
-  },
-  textInput: {
-    borderColor: "lightblue",
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 5
-  },
-  sectionHeader: {
-    fontSize:20,
-    color: "green",
-    fontWeight: "bold"
-  },
-  errorMsg: {
-    color:"red",
-    padding:10
-  },
-  nameHead:{
-    marginBottom:10,
-    marginRight:10
-  },
-  nameInfo:{
-    backgroundColor:"orange",
-    width:20,
-    height:20,
-    textAlign:"center",
-    borderRadius:10
-  },
-  infoTxt: {
-    backgroundColor:"white",
-    color: "black",
-    padding:5,
-    borderRadius:5,
-    position:"absolute",
-    top: -30,
-    zIndex:1
-  },
-  nameHeadHolder:{
-    flexDirection:"row"
-  },
-  modalContainer:{
-    justifyContent:"center",
-    alignItems:"center",
-    backgroundColor: "grey",
-    top: "40%",
-    padding:30,
-    borderRadius:10
-  },
-  modalTxt:{
-    color:"white",
-    marginBottom:10
-  }
-})
 
 export default Home;
